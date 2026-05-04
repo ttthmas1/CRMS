@@ -1,0 +1,670 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DriveEasy — Car Rentals</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --red: #e63946;
+            --dark: #0d0d0d;
+            --card: #1a1a1a;
+            --border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark);
+            color: #fff;
+            font-family: 'Inter',sans-serif;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Bebas Neue',sans-serif;
+            letter-spacing: 2px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* NAV */
+        nav {
+            background: #111;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--red);
+        }
+
+            nav h1 {
+                font-size: 2rem;
+                color: var(--red);
+            }
+
+            nav div {
+                display: flex;
+                gap: 12px;
+            }
+
+            nav button {
+                background: transparent;
+                border: 1px solid #444;
+                color: #fff;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-family: 'Inter',sans-serif;
+                transition: all 0.2s;
+            }
+
+                nav button:hover {
+                    border-color: var(--red);
+                    color: var(--red);
+                }
+
+                nav button.active {
+                    background: var(--red);
+                    border-color: var(--red);
+                }
+
+        /* PAGES */
+        .page {
+            padding: 32px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* AUTH FORMS */
+        .auth-box {
+            max-width: 420px;
+            margin: 60px auto;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+        }
+
+            .auth-box h2 {
+                font-size: 2.5rem;
+                margin-bottom: 8px;
+            }
+
+            .auth-box p {
+                color: #888;
+                margin-bottom: 24px;
+            }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 6px;
+                font-size: 0.85rem;
+                color: #aaa;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .form-group input {
+                width: 100%;
+                background: #111;
+                border: 1px solid var(--border);
+                color: #fff;
+                padding: 12px;
+                border-radius: 6px;
+                font-size: 1rem;
+                font-family: 'Inter',sans-serif;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: var(--red);
+                }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+
+            .btn:hover {
+                opacity: 0.85;
+            }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+            .switch-link span {
+                color: var(--red);
+                cursor: pointer;
+            }
+
+        /* CARS GRID */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+            .page-header h2 {
+                font-size: 2.5rem;
+            }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+            gap: 20px;
+        }
+
+        .car-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: border-color 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+
+            .car-card:hover {
+                border-color: var(--red);
+                transform: translateY(-4px);
+            }
+
+            .car-card .badge {
+                display: inline-block;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                margin-bottom: 12px;
+            }
+
+        .badge.available {
+            background: #1a3a1a;
+            color: #4caf50;
+        }
+
+        .badge.rented {
+            background: #3a1a1a;
+            color: var(--red);
+        }
+
+        .badge.maintenance {
+            background: #3a3a1a;
+            color: #ffc107;
+        }
+
+        .car-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .car-card .category {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .car-card .rate {
+            font-size: 1.8rem;
+            font-family: 'Bebas Neue',sans-serif;
+            color: var(--red);
+        }
+
+            .car-card .rate span {
+                font-size: 0.9rem;
+                color: #888;
+                font-family: 'Inter',sans-serif;
+            }
+
+        .btn-sm {
+            padding: 10px 20px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 16px;
+            transition: opacity 0.2s;
+        }
+
+            .btn-sm:hover {
+                opacity: 0.85;
+            }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+        }
+
+            .modal h2 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+            .modal-actions button {
+                flex: 1;
+                padding: 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+            }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid #444;
+            color: #fff;
+        }
+
+        /* BOOKINGS */
+        .booking-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .booking-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .booking-info p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-Pending {
+            background: #3a3a1a;
+            color: #ffc107;
+        }
+
+        .status-Approved {
+            background: #1a3a1a;
+            color: #4caf50;
+        }
+
+        .status-Active {
+            background: #1a2a3a;
+            color: #2196f3;
+        }
+
+        .status-Completed {
+            background: #2a2a2a;
+            color: #888;
+        }
+
+        .status-Cancelled {
+            background: #3a1a1a;
+            color: var(--red);
+        }
+
+        .status-Rejected {
+            background: #3a1a1a;
+            color: var(--red);
+        }
+
+        .btn-danger {
+            padding: 8px 16px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* ALERT */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: #3a1a1a;
+            border: 1px solid var(--red);
+            color: #ff6b6b;
+        }
+
+        .alert-success {
+            background: #1a3a1a;
+            border: 1px solid #4caf50;
+            color: #4caf50;
+        }
+
+        /* WELCOME BAR */
+        .welcome-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .welcome-bar h3 {
+                font-size: 1.2rem;
+            }
+
+            .welcome-bar p {
+                color: #888;
+                font-size: 0.85rem;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <h1>DRIVE<span style="color:#fff">EASY</span></h1>
+        <div id="navButtons">
+            <button onclick="showPage('cars')" id="navCars" class="hidden">Browse Cars</button>
+            <button onclick="showPage('bookings')" id="navBookings" class="hidden">My Bookings</button>
+            <button onclick="logout()" id="navLogout" class="hidden" style="border-color:var(--red);color:var(--red)">Logout</button>
+            <button onclick="showPage('login')" id="navLogin">Login</button>
+            <button onclick="showPage('register')" id="navRegister" style="background:var(--red);border-color:var(--red)">Register</button>
+        </div>
+    </nav>
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page hidden">
+        <div class="auth-box">
+            <h2>Welcome Back</h2>
+            <p>Sign in to your account</p>
+            <div id="loginAlert"></div>
+            <div class="form-group"><label>Username</label><input id="loginUsername" placeholder="Enter username" /></div>
+            <div class="form-group"><label>Password</label><input id="loginPassword" type="password" placeholder="Enter password" /></div>
+            <button class="btn" onclick="login()">Sign In</button>
+            <div class="switch-link">Don't have an account? <span onclick="showPage('register')">Register here</span></div>
+        </div>
+    </div>
+
+    <!-- REGISTER PAGE -->
+    <div id="registerPage" class="page hidden">
+        <div class="auth-box">
+            <h2>Join DriveEasy</h2>
+            <p>Create your account</p>
+            <div id="registerAlert"></div>
+            <div class="form-group"><label>Full Name</label><input id="regName" placeholder="Your full name" /></div>
+            <div class="form-group"><label>Username</label><input id="regUsername" placeholder="Choose a username" /></div>
+            <div class="form-group"><label>Email</label><input id="regEmail" type="email" placeholder="your@email.com" /></div>
+            <div class="form-group"><label>Phone</label><input id="regPhone" placeholder="Phone number" /></div>
+            <div class="form-group"><label>Password</label><input id="regPassword" type="password" placeholder="Create password" /></div>
+            <button class="btn" onclick="register()">Create Account</button>
+            <div class="switch-link">Already have an account? <span onclick="showPage('login')">Login here</span></div>
+        </div>
+    </div>
+
+    <!-- CARS PAGE -->
+    <div id="carsPage" class="page hidden">
+        <div class="welcome-bar">
+            <div><h3 id="welcomeName">Welcome back!</h3><p>Find your perfect ride below</p></div>
+        </div>
+        <div class="page-header"><h2>Available Fleet</h2></div>
+        <div id="carsAlert"></div>
+        <div class="cars-grid" id="carsGrid"></div>
+    </div>
+
+    <!-- BOOKINGS PAGE -->
+    <div id="bookingsPage" class="page hidden">
+        <div class="page-header"><h2>My Bookings</h2></div>
+        <div id="bookingsAlert"></div>
+        <div id="bookingsList"></div>
+    </div>
+
+    <!-- BOOKING MODAL -->
+    <div class="modal-overlay hidden" id="bookingModal">
+        <div class="modal">
+            <h2>Book This Car</h2>
+            <p id="modalCarName" style="color:#888;margin-bottom:20px;"></p>
+            <div id="modalAlert"></div>
+            <div class="form-group"><label>Pickup Date</label><input type="date" id="pickupDate" /></div>
+            <div class="form-group"><label>Return Date</label><input type="date" id="returnDate" /></div>
+            <p id="totalPreview" style="color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:1.5rem;margin-top:8px;"></p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-sm" style="margin-top:0" onclick="confirmBooking()">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+const API = 'http://toni-crms.runasp.net';
+let currentUser = null;
+let selectedCar = null;
+
+function authHeader() {
+  const u = localStorage.getItem('crms_user');
+  const p = localStorage.getItem('crms_pass');
+  return 'Basic ' + btoa(u + ':' + p);
+}
+
+function showPage(page) {
+  ['login','register','cars','bookings'].forEach(p => {
+    document.getElementById(p+'Page').classList.add('hidden');
+  });
+  document.getElementById(page+'Page').classList.remove('hidden');
+  if(page==='cars') loadCars();
+  if(page==='bookings') loadBookings();
+}
+
+function updateNav(loggedIn) {
+  document.getElementById('navLogin').classList.toggle('hidden', loggedIn);
+  document.getElementById('navRegister').classList.toggle('hidden', loggedIn);
+  document.getElementById('navCars').classList.toggle('hidden', !loggedIn);
+  document.getElementById('navBookings').classList.toggle('hidden', !loggedIn);
+  document.getElementById('navLogout').classList.toggle('hidden', !loggedIn);
+}
+
+function showAlert(id, msg, type='error') {
+  document.getElementById(id).innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+}
+
+async function login() {
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value.trim();
+  if(!u||!p) return showAlert('loginAlert','Please fill in all fields');
+  localStorage.setItem('crms_user', u);
+  localStorage.setItem('crms_pass', p);
+  try {
+    const res = await fetch(`${API}/cars`, { headers:{ Authorization: authHeader() } });
+    if(res.status===401) { showAlert('loginAlert','Invalid username or password'); return; }
+    currentUser = u;
+    document.getElementById('welcomeName').textContent = `Welcome back, ${u}!`;
+    updateNav(true);
+    showPage('cars');
+  } catch(e) { showAlert('loginAlert','Connection error. Try again.'); }
+}
+
+async function register() {
+  const name = document.getElementById('regName').value.trim();
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPassword').value.trim();
+  if(!name||!username||!email||!phone||!password) return showAlert('registerAlert','Please fill in all fields');
+  try {
+    const res = await fetch(`${API}/auth/register`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username,password,fullName:name,email,phone})
+    });
+    if(res.ok) { showAlert('registerAlert','Account created! Please login.','success'); setTimeout(()=>showPage('login'),1500); }
+    else if(res.status===409) showAlert('registerAlert','Username already taken.');
+    else showAlert('registerAlert','Registration failed.');
+  } catch(e) { showAlert('registerAlert','Connection error.'); }
+}
+
+async function loadCars() {
+  document.getElementById('carsAlert').innerHTML='';
+  try {
+    const res = await fetch(`${API}/cars`, { headers:{ Authorization: authHeader() } });
+    if(res.status===401) { logout(); return; }
+    const cars = await res.json();
+    const grid = document.getElementById('carsGrid');
+    grid.innerHTML = cars.map(c => `
+      <div class="car-card" onclick="openBooking(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+        <span class="badge ${c.status.toLowerCase()}">${c.status}</span>
+        <h3>${c.make} ${c.model}</h3>
+        <p class="category">${c.year} · ${c.category} · ${c.colour}</p>
+        <div class="rate">$${c.dailyRate} <span>/ day</span></div>
+        <button class="btn-sm" ${c.status!=='Available'?'disabled style="opacity:0.4;cursor:not-allowed"':''}>
+          ${c.status==='Available'?'Book Now':'Unavailable'}
+        </button>
+      </div>`).join('');
+  } catch(e) { showAlert('carsAlert','Failed to load cars.'); }
+}
+
+function openBooking(car) {
+  if(car.status !== 'Available') return;
+  selectedCar = car;
+  document.getElementById('modalCarName').textContent = `${car.make} ${car.model} — $${car.dailyRate}/day`;
+  document.getElementById('modalAlert').innerHTML='';
+  document.getElementById('totalPreview').textContent='';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('pickupDate').min = today;
+  document.getElementById('returnDate').min = today;
+  document.getElementById('bookingModal').classList.remove('hidden');
+}
+
+function closeModal() { document.getElementById('bookingModal').classList.add('hidden'); }
+
+document.getElementById('returnDate').addEventListener('change', updateTotal);
+document.getElementById('pickupDate').addEventListener('change', updateTotal);
+function updateTotal() {
+  const p = new Date(document.getElementById('pickupDate').value);
+  const r = new Date(document.getElementById('returnDate').value);
+  if(p&&r&&r>p&&selectedCar) {
+    const days = Math.round((r-p)/(1000*60*60*24));
+    document.getElementById('totalPreview').textContent = `Total: $${(days * selectedCar.dailyRate).toFixed(2)} for ${days} day(s)`;
+  }
+}
+
+async function confirmBooking() {
+  const pickup = document.getElementById('pickupDate').value;
+  const ret = document.getElementById('returnDate').value;
+  if(!pickup||!ret) return showAlert('modalAlert','Please select both dates');
+  if(new Date(ret)<=new Date(pickup)) return showAlert('modalAlert','Return date must be after pickup date');
+  try {
+    const res = await fetch(`${API}/bookings`, {
+      method:'POST', headers:{ Authorization: authHeader(), 'Content-Type':'application/json' },
+      body: JSON.stringify({ carId: selectedCar.id, pickupDate: pickup+'T00:00:00', returnDate: ret+'T00:00:00' })
+    });
+    if(res.ok) { closeModal(); showAlert('carsAlert','Booking created successfully! Check My Bookings.','success'); loadCars(); }
+    else if(res.status===409) showAlert('modalAlert','Car is not available for these dates.');
+    else showAlert('modalAlert','Booking failed. Try again.');
+  } catch(e) { showAlert('modalAlert','Connection error.'); }
+}
+
+async function loadBookings() {
+  document.getElementById('bookingsAlert').innerHTML='';
+  try {
+    const res = await fetch(`${API}/bookings/my`, { headers:{ Authorization: authHeader() } });
+    const bookings = await res.json();
+    const list = document.getElementById('bookingsList');
+    if(!bookings.length) { list.innerHTML='<p style="color:#888;text-align:center;margin-top:40px">No bookings yet. Browse cars to make your first booking!</p>'; return; }
+    list.innerHTML = bookings.map(b => `
+      <div class="booking-card">
+        <div class="booking-info">
+          <h3>${b.car}</h3>
+          <p>${new Date(b.pickupDate).toLocaleDateString()} → ${new Date(b.returnDate).toLocaleDateString()}</p>
+          <p style="color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:1.2rem">$${b.totalAmount}</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+          <span class="status-badge status-${b.status}">${b.status}</span>
+          ${b.status==='Pending'?`<button class="btn-danger" onclick="cancelBooking(${b.id})">Cancel</button>`:''}
+        </div>
+      </div>`).join('');
+  } catch(e) { showAlert('bookingsAlert','Failed to load bookings.'); }
+}
+
+async function cancelBooking(id) {
+  if(!confirm('Cancel this booking?')) return;
+  try {
+    const res = await fetch(`${API}/bookings/${id}`, { method:'DELETE', headers:{ Authorization: authHeader() } });
+    if(res.ok) { showAlert('bookingsAlert','Booking cancelled.','success'); loadBookings(); }
+    else showAlert('bookingsAlert','Could not cancel booking.');
+  } catch(e) { showAlert('bookingsAlert','Connection error.'); }
+}
+
+function logout() {
+  localStorage.removeItem('crms_user');
+  localStorage.removeItem('crms_pass');
+  currentUser = null;
+  updateNav(false);
+  showPage('login');
+}
+
+// Start
+showPage('login');
+    </script>
+</body>
+</html>
